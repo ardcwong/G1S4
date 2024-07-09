@@ -1,4 +1,10 @@
 import streamlit as st
+__import__('pysqlite3')
+import sys
+
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import nltk
@@ -17,6 +23,7 @@ import numpy as np
 import ast #built in
 import chromadb
 from chromadb.utils import embedding_functions
+
 # st.set_page_config(layout='wide')
 
 
