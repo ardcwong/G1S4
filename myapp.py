@@ -1,0 +1,127 @@
+import streamlit as st
+
+
+st.set_page_config(layout='wide')
+
+
+
+# col2.write("")
+
+# # col2.write("MedInfoHub is a comprehensive healthcare app designed to provide accessible medical information to patients and healthcare providers. Leveraging the power of the MedQuAD dataset* and advanced AI, MedInfoHub offers reliable answers to medical questions, supports telemedicine consultations, and enhances public health literacy. Whether you’re a patient seeking to understand your health better or a healthcare provider in need of quick, reliable information, MedInfoHub is your go-to resource for trusted medical knowledge.")
+# col2.write("*Do you agree that ")
+# col2.write("Press the 'Activate MedInfoHub' Button to begin exploring MedInfoHub.")
+
+if "role" not in st.session_state:
+    st.session_state.role = None
+
+ROLES = ["", "Patient", "Health Care Provider", "Neither"]
+
+
+def login():
+    st.markdown('<p style="font-size: 18px; color: red;"><strong>⚠️ This app is not intended for self-diagnosis or self-treatment. Always consult a qualified healthcare professional for medical advice and diagnosis. ⚠️</strong></p>', unsafe_allow_html=True)
+    col1, col2,col3 = st.columns([1,2,1])
+    col2.image('data/MIHv2.png')
+    col2.image('data/art.png')
+    st.header("Log in")
+    role = st.selectbox("Choose your role", ROLES)
+
+    if st.button("Log in"):
+        st.session_state.role = role
+        st.rerun()
+
+
+def logout():
+    st.session_state.role = None
+    st.rerun()
+
+def contactus():
+    st.title('MedInfoHub')
+    # st.subheader("WHAT WE OFFER")
+    # st.image('data/use.png')
+    st.subheader("CONTACT US")
+    st.write('For any concerns or suggestions, you may reach out to us through the following:')
+    contactinfo = """
+    Facebook: facebook.com/medinfohub
+    Twitter: twitter.com/medinfohub
+    Instagram: instagram.com/medinfohub
+    """
+    # Display formatted text with st.markdown
+    st.markdown(contactinfo, unsafe_allow_html=True)
+
+    
+role = st.session_state.role
+
+logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
+about_us = st.Page(contactus, title="Contact Us", icon="✉️")
+
+
+
+# settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
+request_1 = st.Page(
+    "MedQuAd/medquad.py",
+    title="HealthPlus",
+    icon="⚕️",
+    default=(role == role),
+)
+request_2 = st.Page(
+    "FDA/fda_app.py", title="PharmaPal", icon="👩🏻‍⚕️"
+)
+
+
+# respond_1 = st.Page(
+#     "respond/respond_1.py",
+#     title="Respond 1",
+#     icon=":material/healing:",
+#     default=(role == "Responder"),
+# )
+# respond_2 = st.Page(
+#     "respond/respond_2.py", title="Respond 2", icon=":material/handyman:"
+# )
+
+
+# admin_1 = st.Page(
+#     "admin/admin_1.py",
+#     title="Admin 1",
+#     icon=":material/person_add:",
+#     default=(role == "Admin"),
+# )
+# admin_2 = st.Page("admin/admin_2.py", title="Admin 2", icon=":material/security:")
+
+account_pages = [logout_page]
+request_pages = [request_1, request_2]
+about_us_pages = [about_us]
+# respond_pages = [respond_1, respond_2]
+# admin_pages = [admin_1, admin_2]
+
+# st.sidebar.title('MedInfoHub')
+# with st.sidebar:
+#     # st.subheader("WHAT WE OFFER")
+#     # st.image('data/use.png')
+#     st.subheader("CONTACT US")
+#     st.write('For any concerns or suggestions, you may reach out to us through the following:')
+#     contactinfo = """
+#     Facebook: facebook.com/medinfohub
+#     Twitter: twitter.com/medinfohub
+#     Instagram: instagram.com/medinfohub
+#     """
+#     # Display formatted text with st.markdown
+#     st.markdown(contactinfo, unsafe_allow_html=True)
+# st.title("Request manager")
+# st.logo("images/horizontal_blue.png", icon_image="images/icon_blue.png")
+
+page_dict = {}
+if st.session_state.role in ["Patient", "Health Care Provider", "Neither"]:
+    page_dict["Application"] = request_pages
+if st.session_state.role in ["Patient", "Health Care Provider", "Neither"]:
+    page_dict["About Us"] = about_us_pages
+# if st.session_state.role in ["Responder", "Admin"]:
+#     page_dict["Respond"] = respond_pages
+# if st.session_state.role == "Admin":
+#     page_dict["Admin"] = admin_pages
+
+if len(page_dict) > 0:
+    pg = st.navigation({"Account": account_pages} | page_dict)
+else:
+    pg = st.navigation([st.Page(login)]) #defaults to login page if no acceptable role is selected
+
+pg.run()
